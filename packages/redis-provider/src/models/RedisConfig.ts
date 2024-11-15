@@ -1,3 +1,3 @@
-export class RedisConfig {
-	url: string | undefined;
-}
+// export class RedisConfig {
+// 	url: string | undefined;
+// }
