@@ -25,7 +25,6 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "bump:config-provider": "lerna exec --scope config-provider -- npm version patch --no-git-tag-version",
-    "build:config-provider": "lerna run build --scope config-provider",
     "bump:redis-provider": "lerna exec --scope redis-provider -- npm version patch --no-git-tag-version"
   },
   "dependencies": {
@@ -56,9 +55,6 @@
     "ts-patch": "^3.2.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.2"
-  },
-  "publishConfig": {
-	"@databox:registry": "https://npm.pkg.github.com"
   },
   "jest": {
     "moduleNameMapper": {
