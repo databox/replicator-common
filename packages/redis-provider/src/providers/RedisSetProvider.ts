@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { RedisClientType } from "redis";
-import { IRedisFactory } from "../contracts/interfaces/src/providers/redis/contracts/interfaces/redis.factory.interface";
-import { IRedisSetProvider } from "../contracts/interfaces/src/providers/redis/contracts/interfaces/redis.set.provider.interface";
+import { IRedisSetProvider } from "../contracts/interfaces/IRedisSetProvider";
+import { IRedisFactory } from "../contracts/interfaces/IRedisFactory";
 
 @Injectable()
 export class RedisSetProvider implements IRedisSetProvider {
@@ -9,7 +9,7 @@ export class RedisSetProvider implements IRedisSetProvider {
 
 	constructor(
 		@Inject(Logger) private readonly logger: Logger,
-		@Inject(IRedisFactory) redisFactory: IRedisFactory,
+		@Inject(IRedisFactory) redisFactory: IRedisFactory
 	) {
 		this.client = redisFactory.getClient();
 	}

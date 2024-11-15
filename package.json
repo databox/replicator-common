@@ -20,10 +20,12 @@
     "build": "nest build",
     "watch": "nest build --watch",
     "format": "prettier --write \"packages/**/*.ts\" \"tests/**/*.ts\"",
-    "lint": "eslint -c .eslintrc.json \"{src,apps,libs,tests,scripts}/**/*.ts\" --fix",
+    "lint": "eslint -c .eslintrc.json \"**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "bump:config-provider": "lerna exec --scope config-provider -- npm version patch --no-git-tag-version",
+    "bump:redis-provider": "lerna exec --scope redis-provider -- npm version patch --no-git-tag-version"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0"
@@ -68,10 +70,6 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "src/core/services/*.(t|j)s",
-      "src/workflow/services/*.(t|j)s"
-    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

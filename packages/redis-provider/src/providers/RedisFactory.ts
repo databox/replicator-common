@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { createClient, RedisClientType } from "redis";
-import { IConfigProvider } from "../../ConfigProvider/Contracts/Interfaces/ConfigProvider.interface";
-import { IRedisFactory } from "../contracts/interfaces/src/providers/redis/contracts/interfaces/redis.factory.interface";
-import { RedisConfig } from "../models/redis.config.model";
+import { IRedisFactory } from "../contracts/interfaces/IRedisFactory";
+// TODO research how to use config-provider as package here?
+import { IConfigProvider } from "config-provider/src/contracts/interfaces/IConfigProvider";
+import { RedisConfig } from "../models/RedisConfig";
 
 @Injectable()
 export class RedisFactory implements IRedisFactory {
