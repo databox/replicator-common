@@ -54,7 +54,6 @@
     "ts-node": "^10.9.2",
     "ts-patch": "^3.2.1",
     "tsconfig-paths": "^4.2.0",
-    "tsup": "^8.0.2",
     "typescript": "^5.4.2"
   },
   "jest": {
