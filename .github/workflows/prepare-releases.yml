@@ -60,19 +60,19 @@ jobs:
             # Create release notes by getting commits since last tag
             RELEASE_NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
             
-            # Delete existing draft release if it exists
             if gh release view $TAG_NAME &>/dev/null; then
-              echo "Deleting existing release $TAG_NAME"
-              gh release delete $TAG_NAME --yes
-              git push --delete origin $TAG_NAME || true
+              echo "Updating existing release $TAG_NAME"
+              gh release edit $TAG_NAME \
+                --title "$PACKAGE_NAME v$VERSION" \
+                --notes "$RELEASE_NOTES" \
+                --draft
+            else
+              echo "Creating new release $TAG_NAME"
+              gh release create $TAG_NAME \
+                --title "$PACKAGE_NAME v$VERSION" \
+                --notes "$RELEASE_NOTES" \
+                --draft
             fi
-            
-            echo "Creating new release $TAG_NAME"
-            # Create new GitHub release
-            gh release create $TAG_NAME \
-              --title "$PACKAGE_NAME v$VERSION" \
-              --notes "$RELEASE_NOTES" \
-              --draft
 
           done
 
