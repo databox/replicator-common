@@ -18,6 +18,8 @@
   "main": "packages/index.js",
   "scripts": {
     "build": "nest build",
+    "build:config-provider": "lerna run build --scope @databox/config-provider",
+    "build:redis-provider": "lerna run build --scope @databox/redis-provider",
     "watch": "nest build --watch",
     "format": "prettier --write \"packages/**/*.ts\" \"tests/**/*.ts\"",
     "lint": "eslint -c .eslintrc.json \"**/*.ts\" --fix",
