@@ -57,8 +57,21 @@ jobs:
             
             echo "Processing release for $TAG_NAME"
             
-            # Create release notes by getting commits since last tag
-            RELEASE_NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
+            # Get the previous version tag
+            PREV_TAG=$(git describe --tags --abbrev=0 --match "${PACKAGE_NAME}@*" 2>/dev/null || echo "")
+            
+            # Generate changes section
+            CHANGES=$(git log --pretty=format:"- %s @%an (#%h)" ${PREV_TAG:+$PREV_TAG..HEAD} -- $LOCATION)
+            
+            # Get unique contributors
+            CONTRIBUTORS=$(git log --pretty=format:"%an" ${PREV_TAG:+$PREV_TAG..HEAD} -- $LOCATION | sort -u | sed 's/^/@/' | tr '\n' ' ')
+            
+            # Create formatted release notes
+            RELEASE_NOTES="### Changes\n${CHANGES}\n\n### Contributors\n${CONTRIBUTORS}\n"
+            
+            if [ ! -z "$PREV_TAG" ]; then
+              RELEASE_NOTES="${RELEASE_NOTES}\n### Full Changelog\n${PREV_TAG}...${TAG_NAME}"
+            fi
             
             if gh release view $TAG_NAME &>/dev/null; then
               echo "Updating existing release $TAG_NAME"
