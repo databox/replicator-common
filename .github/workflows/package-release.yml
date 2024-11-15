@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.10'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Extract package name and version
         id: package-info
@@ -24,23 +25,25 @@ jobs:
           TAG_NAME=${GITHUB_REF#refs/tags/}
           PACKAGE_NAME=${TAG_NAME%@*}
           VERSION=${TAG_NAME#*@}
-          echo $PACKAGE_NAME
-          echo $VERSION
           echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # - name: Install dependencies
-      #   run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      # - name: Build package
-      #   run: |
-      #     cd src/${{ steps.package-info.outputs.package_name }}
-      #     npm version ${{ steps.package-info.outputs.version }} --no-git-tag-version
-      #     npm run build
+      - name: Build package
+        run: |
+          # Use lerna to build specific package
+          lerna run build --scope ${{ steps.package-info.outputs.package_name }}
 
-      # - name: Publish package
-      #   run: |
-      #     cd src/${{ steps.package-info.outputs.package_name }}
-      #     npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
+      - name: Publish package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Use lerna to publish specific package
+          lerna publish from-package \
+            --yes \
+            --no-verify-access \
+            --no-git-tag-version \
+            --no-push \
+            --scope ${{ steps.package-info.outputs.package_name }}
