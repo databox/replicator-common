@@ -1,0 +1,14 @@
+{
+    "editor.insertSpaces": false,
+    "editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "explicit"
+		},
+    "eslint.validate": ["typescript"],
+    "editor.formatOnSaveMode": "file",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "editor.tabSize": 2,
+		"editor.detectIndentation": false,
+		"files.eol": "\n"
+}
