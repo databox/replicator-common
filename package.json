@@ -20,7 +20,7 @@
     "build": "nest build",
     "watch": "nest build --watch",
     "format": "prettier --write \"packages/**/*.ts\" \"tests/**/*.ts\"",
-    "lint": "eslint -c .eslintrc.json \"{src,apps,libs,tests,scripts}/**/*.ts\" --fix",
+    "lint": "eslint -c .eslintrc.json \"**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -70,10 +70,6 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "src/core/services/*.(t|j)s",
-      "src/workflow/services/*.(t|j)s"
-    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
