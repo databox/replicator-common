@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { RedisClientType } from "redis";
-import { IRedisFactory } from "../contracts/interfaces/IRedisFactory";
-import { IRedisHashProvider } from "../contracts/interfaces/IRedisHashProvider";
+import { IRedisFactory, IRedisHashProvider } from "../contracts/interfaces";
 
 @Injectable()
 export class RedisHashProvider implements IRedisHashProvider {

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { IConfigProvider } from "../contracts/interfaces/IConfigProvider";
-import { ConfigException } from "../exceptions/ConfigException";
+import { IConfigProvider } from "../contracts/interfaces";
+import { ConfigException } from "../exceptions";
 
 @Injectable()
 export class PredefinedConfigProvider implements IConfigProvider {
