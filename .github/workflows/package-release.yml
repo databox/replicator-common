@@ -54,4 +54,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Use lerna to publish specific package with scope
-          npm publish ./dist --registry https://npm.pkg.github.com
+          npx lerna exec --scope ${{ steps.package-info.outputs.scoped_name }} -- npm publish ./dist --registry https://npm.pkg.github.com
