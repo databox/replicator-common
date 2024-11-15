@@ -6,8 +6,8 @@
  {
 	"extends": "./tsconfig.json",
 	"include": [
-		"src/**/*",
-		"tests/**/*",
+		"packages/**/*",
+		"tests/**/*"
 	],
 	"exclude": []
 }
