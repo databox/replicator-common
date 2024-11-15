@@ -24,8 +24,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "bump:config-provider": "lerna exec --scope config-provider -- npm version patch --no-git-tag-version",
-    "bump:redis-provider": "lerna exec --scope redis-provider -- npm version patch --no-git-tag-version"
+    "bump:config-provider": "lerna exec --scope @databox/config-provider -- npm version patch --no-git-tag-version",
+    "bump:redis-provider": "lerna exec --scope @databox/redis-provider -- npm version patch --no-git-tag-version"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0"
