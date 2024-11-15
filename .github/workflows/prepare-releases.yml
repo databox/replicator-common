@@ -1,0 +1,64 @@
+name: Prepare Package Releases
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'src/**'
+    
+jobs:
+  prepare-releases:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for Lerna to detect changes
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10'
+
+      - name: Install dependencies
+        run: |
+          npm install -g lerna
+          npm ci
+
+      - name: Get changed packages
+        id: changed-packages
+        run: |
+          # Get list of changed packages with their versions
+          PACKAGES=$(lerna ls --since origin/master --json)
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+
+      - name: Create releases
+        if: steps.changed-packages.outputs.packages != '[]' && steps.changed-packages.outputs.packages != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Parse the JSON output and create releases for each changed package
+          echo '${{ steps.changed-packages.outputs.packages }}' | jq -c '.[]' | while read -r package; do
+            NAME=$(echo $package | jq -r '.name')
+            VERSION=$(echo $package | jq -r '.version')
+            LOCATION=$(echo $package | jq -r '.location')
+            
+            # Extract package name without scope
+            PACKAGE_NAME=$(echo $NAME | sed 's/^@[^/]*\///')
+            
+            # Create tag name in the format package1@1.0.0
+            TAG_NAME="${PACKAGE_NAME}@${VERSION}"
+            
+            echo "Creating release for $TAG_NAME"
+            
+            # Create release notes by getting commits since last tag
+            RELEASE_NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
+            
+            # Create GitHub release
+            gh release create $TAG_NAME \
+              --title "$PACKAGE_NAME v$VERSION" \
+              --notes "$RELEASE_NOTES" \
+              --draft
+          done 
