@@ -1,0 +1,46 @@
+name: Package Release
+
+on:
+  push:
+    tags:
+      - '*@*.*.*'  # Matches tags like package1@1.0.0
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10'
+
+      - name: Extract package name and version
+        id: package-info
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          PACKAGE_NAME=${TAG_NAME%@*}
+          VERSION=${TAG_NAME#*@}
+          echo $PACKAGE_NAME
+          echo $VERSION
+          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # - name: Install dependencies
+      #   run: npm ci
+
+      # - name: Build package
+      #   run: |
+      #     cd src/${{ steps.package-info.outputs.package_name }}
+      #     npm version ${{ steps.package-info.outputs.version }} --no-git-tag-version
+      #     npm run build
+
+      # - name: Publish package
+      #   run: |
+      #     cd src/${{ steps.package-info.outputs.package_name }}
+      #     npm publish --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
