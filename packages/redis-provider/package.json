@@ -8,8 +8,7 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"redis": "^4.7.0",
-		"@databox/config-provider": "1.0.14"
+		"redis": "^4.7.0"
 	},
 	"devDependencies": {
 		"@types/redis": "^4.0.11"
