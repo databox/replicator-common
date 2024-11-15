@@ -37,105 +37,43 @@ jobs:
           echo "Changed packages: $PACKAGES"
           echo "packages=${PACKAGES}" >> $GITHUB_OUTPUT
 
-      - name: Process package info
+      - name: Create or update releases
         if: steps.changed-packages.outputs.packages != '[]' && steps.changed-packages.outputs.packages != ''
-        id: package-info
         run: |
-          # Create arrays to store package information
-          NAMES=()
-          VERSIONS=()
-          LOCATIONS=()
-          TAG_NAMES=()
-          
-          # Parse the JSON output and extract package information
+          # Parse the JSON output and create/update releases for each changed package
           echo '${{ steps.changed-packages.outputs.packages }}' | jq -r '.[] | @base64' | while read -r pkg_b64; do
+            # Decode package JSON
             pkg=$(echo $pkg_b64 | base64 --decode)
             
             NAME=$(echo $pkg | jq -r '.name')
             VERSION=$(echo $pkg | jq -r '.version')
             LOCATION=$(echo $pkg | jq -r '.location')
+            
+            # Extract package name without scope
             PACKAGE_NAME=$(echo $NAME | sed 's/^@[^/]*\///')
+            
+            # Create tag name in the format package1@1.0.0
             TAG_NAME="${PACKAGE_NAME}@${VERSION}"
             
-            NAMES+=("$NAME")
-            VERSIONS+=("$VERSION")
-            LOCATIONS+=("$LOCATION")
-            TAG_NAMES+=("$TAG_NAME")
+            echo "Processing release for $TAG_NAME"
             
-            # Store arrays as newline-separated strings in output
-            echo "names<<EOF" >> $GITHUB_OUTPUT
-            printf '%s\n' "${NAMES[@]}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            # Create release notes by getting commits since last tag
+            RELEASE_NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
             
-            echo "versions<<EOF" >> $GITHUB_OUTPUT
-            printf '%s\n' "${VERSIONS[@]}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            
-            echo "locations<<EOF" >> $GITHUB_OUTPUT
-            printf '%s\n' "${LOCATIONS[@]}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            
-            echo "tag_names<<EOF" >> $GITHUB_OUTPUT
-            printf '%s\n' "${TAG_NAMES[@]}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          done
-
-      - name: Check existing releases
-        if: steps.package-info.outputs.tag_names != ''
-        run: |
-          # Read the tag names
-          IFS=$'\n' read -d '' -r -a TAG_NAMES < <(echo "${{ steps.package-info.outputs.tag_names }}")
-          
-          for TAG_NAME in "${TAG_NAMES[@]}"; do
+            # Delete existing draft release if it exists
             if gh release view $TAG_NAME &>/dev/null; then
-              IS_DRAFT=$(gh release view $TAG_NAME --json isDraft -q .isDraft)
-              if [ "$IS_DRAFT" = "true" ]; then
-                echo "Deleting existing draft release $TAG_NAME"
-                gh release delete $TAG_NAME --yes
-                git push --delete origin $TAG_NAME || true
-              else
-                echo "Release $TAG_NAME already exists and is published. Skipping."
-              fi
+              echo "Deleting existing release $TAG_NAME"
+              gh release delete $TAG_NAME --yes
+              git push --delete origin $TAG_NAME || true
             fi
-          done
-
-      - name: Generate release notes
-        if: steps.package-info.outputs.tag_names != ''
-        id: release-notes
-        run: |
-          # Read the arrays
-          IFS=$'\n' read -d '' -r -a TAG_NAMES < <(echo "${{ steps.package-info.outputs.tag_names }}")
-          IFS=$'\n' read -d '' -r -a LOCATIONS < <(echo "${{ steps.package-info.outputs.locations }}")
-          
-          # Create release notes for each package
-          for i in "${!TAG_NAMES[@]}"; do
-            TAG_NAME="${TAG_NAMES[$i]}"
-            LOCATION="${LOCATIONS[$i]}"
-            
-            NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
-            
-            echo "notes_${i}<<EOF" >> $GITHUB_OUTPUT
-            echo "$NOTES" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          done
-
-      - name: Create releases
-        if: steps.package-info.outputs.tag_names != ''
-        run: |
-          # Read the arrays
-          IFS=$'\n' read -d '' -r -a TAG_NAMES < <(echo "${{ steps.package-info.outputs.tag_names }}")
-          
-          for i in "${!TAG_NAMES[@]}"; do
-            TAG_NAME="${TAG_NAMES[$i]}"
-            PACKAGE_NAME=$(echo $TAG_NAME | cut -d@ -f1)
-            VERSION=$(echo $TAG_NAME | cut -d@ -f2)
-            NOTES="${{ steps.release-notes.outputs.notes_$i }}"
             
             echo "Creating new release $TAG_NAME"
+            # Create new GitHub release
             gh release create $TAG_NAME \
               --title "$PACKAGE_NAME v$VERSION" \
-              --notes "$NOTES" \
+              --notes "$RELEASE_NOTES" \
               --draft
+
           done
 
       - name: List created/updated releases

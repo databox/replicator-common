@@ -1,5 +1,5 @@
 name: Package Release
-run-name: Publish package ${{ github.ref_name }}
+run-name: Package Release of ${{ github.ref_name }}
 
 on:
   push:
