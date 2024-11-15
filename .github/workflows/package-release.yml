@@ -28,20 +28,27 @@ jobs:
           TAG_NAME=${GITHUB_REF#refs/tags/}
           PACKAGE_NAME=${TAG_NAME%@*}
           VERSION=${TAG_NAME#*@}
+          SCOPED_NAME="@databox/${PACKAGE_NAME}"
           echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "scoped_name=$SCOPED_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Configure npm
+        run: |
+          echo "@databox:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+
       - name: Build package
         run: |
-          # Use lerna to build specific package
-          lerna run build --scope ${{ steps.package-info.outputs.package_name }}
+          # Use lerna to build specific package with scope
+          lerna run build --scope ${{ steps.package-info.outputs.scoped_name }}
 
       - name: Publish package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Use lerna to publish specific package with scope
-          npx lerna exec --scope ${{ steps.package-info.outputs.package_name }} -- npm publish --registry https://npm.pkg.github.com
+          npx lerna exec --scope ${{ steps.package-info.outputs.scoped_name }} -- npm publish --registry https://npm.pkg.github.com
