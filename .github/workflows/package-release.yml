@@ -24,6 +24,8 @@ jobs:
           TAG_NAME=${GITHUB_REF#refs/tags/}
           PACKAGE_NAME=${TAG_NAME%@*}
           VERSION=${TAG_NAME#*@}
+          echo $PACKAGE_NAME
+          echo $VERSION
           echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
