@@ -3,7 +3,7 @@ name: Prepare Package Releases
 on:
   push:
     branches:
-      - '**'
+      - master
     paths:
       - 'packages/**'
     
@@ -11,7 +11,7 @@ jobs:
   prepare-releases:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
       - name: Checkout repository
@@ -32,7 +32,7 @@ jobs:
         id: changed-packages
         run: |
           # Get list of changed packages with their versions
-          PACKAGES=$(lerna ls --since origin/master --json | jq -c .)
+          PACKAGES=$(lerna ls --since origin/master~1 --json | jq -c .)
           echo "Changed packages: $PACKAGES"
           echo "packages=${PACKAGES}" >> $GITHUB_OUTPUT
 
@@ -59,27 +59,20 @@ jobs:
             # Create release notes by getting commits since last tag
             RELEASE_NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
             
-            # Check if release already exists
+            # Delete existing draft release if it exists
             if gh release view $TAG_NAME &>/dev/null; then
-              echo "Updating existing release $TAG_NAME"
-              
-              # Update existing release
-              gh release edit $TAG_NAME \
-                --title "$PACKAGE_NAME v$VERSION" \
-                --notes "$RELEASE_NOTES"
-              
-              # Update tag to point to current commit
-              git tag -f $TAG_NAME
-              git push --force origin $TAG_NAME
-            else
-              echo "Creating new release $TAG_NAME"
-              
-              # Create new GitHub release
-              gh release create $TAG_NAME \
-                --title "$PACKAGE_NAME v$VERSION" \
-                --notes "$RELEASE_NOTES" \
-                --draft
+              echo "Deleting existing release $TAG_NAME"
+              gh release delete $TAG_NAME --yes
+              git push --delete origin $TAG_NAME || true
             fi
+            
+            echo "Creating new release $TAG_NAME"
+            # Create new GitHub release
+            gh release create $TAG_NAME \
+              --title "$PACKAGE_NAME v$VERSION" \
+              --notes "$RELEASE_NOTES" \
+              --draft
+
           done
 
       - name: List created/updated releases
