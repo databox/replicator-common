@@ -24,15 +24,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install -g lerna
           npm ci
 
       - name: Get changed packages
         id: changed-packages
         run: |
           # Get list of changed packages with their versions
-          PACKAGES=$(lerna ls --since origin/master --json)
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+          PACKAGES=$(lerna ls --since origin/master --json | jq -c .)
+          echo "Changed packages: $PACKAGES"
+          echo "packages=${PACKAGES}" >> $GITHUB_OUTPUT
 
       - name: Create or update releases
         if: steps.changed-packages.outputs.packages != '[]' && steps.changed-packages.outputs.packages != ''
@@ -40,10 +40,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Parse the JSON output and create/update releases for each changed package
-          echo '${{ steps.changed-packages.outputs.packages }}' | jq -c '.[]' | while read -r package; do
-            NAME=$(echo $package | jq -r '.name')
-            VERSION=$(echo $package | jq -r '.version')
-            LOCATION=$(echo $package | jq -r '.location')
+          echo '${{ steps.changed-packages.outputs.packages }}' | jq -r '.[] | @base64' | while read -r pkg_b64; do
+            # Decode package JSON
+            pkg=$(echo $pkg_b64 | base64 --decode)
+            
+            NAME=$(echo $pkg | jq -r '.name')
+            VERSION=$(echo $pkg | jq -r '.version')
+            LOCATION=$(echo $pkg | jq -r '.location')
             
             # Extract package name without scope
             PACKAGE_NAME=$(echo $NAME | sed 's/^@[^/]*\///')
@@ -80,4 +83,7 @@ jobs:
           done
 
       - name: List created/updated releases
-        run: gh release list --limit 10
+        if: success()
+        run: |
+          echo "Recently created/updated releases:"
+          gh release list --limit 10
