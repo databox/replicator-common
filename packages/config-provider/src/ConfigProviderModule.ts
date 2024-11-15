@@ -1,6 +1,6 @@
 import { Global, Module } from "@nestjs/common";
-import { IConfigProvider } from "./contracts/interfaces/IConfigProvider";
-import { NconfConfigProvider } from "./providers/NconfConfigProvider";
+import { IConfigProvider } from "./contracts/interfaces";
+import { NconfConfigProvider } from "./providers";
 
 @Global()
 @Module({

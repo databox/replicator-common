@@ -1,7 +1,7 @@
 import nconf from "nconf";
 import { Injectable, OnModuleInit } from "@nestjs/common";
-import { ConfigException } from "../exceptions/ConfigException";
-import { IConfigProvider } from "../contracts/interfaces/IConfigProvider";
+import { ConfigException } from "../exceptions";
+import { IConfigProvider } from "../contracts/interfaces";
 
 @Injectable()
 export class NconfConfigProvider implements IConfigProvider, OnModuleInit {

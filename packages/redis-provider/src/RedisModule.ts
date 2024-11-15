@@ -1,14 +1,8 @@
 import { Logger, Module, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
-import { IRedisProvider } from "./contracts/interfaces/IRedisProvider";
-import { RedisProvider } from "./providers/RedisProvider";
-import { IRedisHashProvider } from "./contracts/interfaces/IRedisHashProvider";
-import { RedisHashProvider } from "./providers/RedisHashProvider";
-import { IRedisSetProvider } from "./contracts/interfaces/IRedisSetProvider";
-import { RedisSetProvider } from "./providers/RedisSetProvider";
-import { IRedisFactory } from "./contracts/interfaces/IRedisFactory";
+import { IRedisFactory, IRedisHashProvider, IRedisProvider, IRedisSetProvider } from "./contracts/interfaces";
+import { RedisFactory, RedisHashProvider, RedisProvider, RedisSetProvider } from "./providers";
 import { IConfigProvider } from "config-provider/src/contracts/interfaces/IConfigProvider";
-import { RedisFactory } from "./providers/RedisFactory";
 
 @Module({
 	providers: [
