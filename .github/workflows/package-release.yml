@@ -1,4 +1,5 @@
-name: ${{ github.ref_name }}
+name: Package Release
+run-name: Package Release of ${{ github.ref_name }}
 
 on:
   push:
@@ -7,6 +8,7 @@ on:
 
 jobs:
   build-and-publish:
+    name: ${{ github.ref_name }}
     runs-on: ubuntu-latest
 
     steps:
