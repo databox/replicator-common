@@ -1,0 +1,13 @@
+/**
+ * The purpose of a separate config is also including code from the repository into linter.
+ * Those will include test files and other tool-like code that you might produce.
+ * Your main tsconfig.json doesn't include those files by default.
+ */
+ {
+	"extends": "./tsconfig.json",
+	"include": [
+		"packages/**/*",
+		"tests/**/*"
+	],
+	"exclude": []
+}

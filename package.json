@@ -1,0 +1,78 @@
+{
+  "name": "replicator-common",
+  "version": "1.0.0",
+  "description": "The replicator-common package is part of a monorepo that includes multiple npm packages. This package provides common utilities, interfaces, and configurations that are shared across different replicator modules. It includes TypeScript code and leverages the NestJS framework for building scalable server-side applications.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/databox/replicator-common.git"
+  },
+  "author": "Uroš Zagoranski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/databox/replicator-common/issues"
+  },
+  "homepage": "https://github.com/databox/replicator-common#readme",
+  "workspaces": [
+    "packages/*"
+  ],
+  "main": "packages/index.js",
+  "scripts": {
+    "build": "nest build",
+    "watch": "nest build --watch",
+    "format": "prettier --write \"packages/**/*.ts\" \"tests/**/*.ts\"",
+    "lint": "eslint -c .eslintrc.json \"{src,apps,libs,tests,scripts}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.0.0",
+    "@nestjs/schematics": "^10.0.0",
+    "@nestjs/testing": "^10.0.0",
+    "@stylistic/eslint-plugin": "^1.4.1",
+    "@stylistic/eslint-plugin-ts": "^1.4.1",
+    "@types/jest": "^29.5.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^3.2.0",
+    "jest": "^29.5.0",
+    "lerna": "^8.1.9",
+    "prettier": "^3.1.1",
+    "ts-jest": "^29.1.0",
+    "ts-loader": "^9.4.3",
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.2.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.4.2"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "testRegex": ".*\\.test\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "src/core/services/*.(t|j)s",
+      "src/workflow/services/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}

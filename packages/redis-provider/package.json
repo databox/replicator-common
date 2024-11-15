@@ -1,0 +1,17 @@
+{
+	"name": "redis-provider",
+	"version": "1.0.0",
+	"description": "",
+	"main": "RedisModule.js",
+	"scripts": {
+		"build": "nest build",
+		"format": "prettier --write \"packages/**/*.ts\" \"tests/**/*.ts\"",
+		"lint": "eslint -c .eslintrc.json \"{src,apps,libs,tests,scripts}/**/*.ts\" --fix"
+	},
+	"dependencies": {
+		"nconf": "^0.12.1"
+	},
+	"devDependencies": {
+		"@types/nconf": "^0.10.6"
+	}
+}
