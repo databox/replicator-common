@@ -1,28 +1,28 @@
 import { Logger, Module, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
-import { IConfigProvider } from "../../ConfigProvider/Contracts/Interfaces/ConfigProvider.interface";
-import { IRedisFactory } from "./contracts/interfaces/src/providers/redis/contracts/interfaces/redis.factory.interface";
-import { IRedisHashProvider } from "./contracts/interfaces/src/providers/redis/contracts/interfaces/redis.hash.provider.interface";
-import { IRedisProvider } from "./contracts/interfaces/src/providers/redis/contracts/interfaces/redis.provider.interface";
-import { IRedisSetProvider } from "./contracts/interfaces/src/providers/redis/contracts/interfaces/redis.set.provider.interface";
-import { RedisFactory } from "./providers/redis.factory";
-import { RedisHashProvider } from "./providers/redis.hash.provider";
-import { RedisProvider } from "./providers/redis.provider";
-import { RedisSetProvider } from "./providers/redis.set.provider";
+import { IRedisProvider } from "./contracts/interfaces/IRedisProvider";
+import { RedisProvider } from "./providers/RedisProvider";
+import { IRedisHashProvider } from "./contracts/interfaces/IRedisHashProvider";
+import { RedisHashProvider } from "./providers/RedisHashProvider";
+import { IRedisSetProvider } from "./contracts/interfaces/IRedisSetProvider";
+import { RedisSetProvider } from "./providers/RedisSetProvider";
+import { IRedisFactory } from "./contracts/interfaces/IRedisFactory";
+import { IConfigProvider } from "config-provider/src/contracts/interfaces/IConfigProvider";
+import { RedisFactory } from "./providers/RedisFactory";
 
 @Module({
 	providers: [
 		{
 			provide: IRedisProvider,
-			useClass: RedisProvider,
+			useClass: RedisProvider
 		},
 		{
 			provide: IRedisHashProvider,
-			useClass: RedisHashProvider,
+			useClass: RedisHashProvider
 		},
 		{
 			provide: IRedisSetProvider,
-			useClass: RedisSetProvider,
+			useClass: RedisSetProvider
 		},
 		{
 			provide: IRedisFactory,
@@ -34,11 +34,11 @@ import { RedisSetProvider } from "./providers/redis.set.provider";
 				});
 
 				return redisFactory;
-			},
+			}
 		},
-		Logger,
+		Logger
 	],
-	exports: [IRedisProvider, IRedisFactory, IRedisHashProvider, IRedisSetProvider],
+	exports: [IRedisProvider, IRedisFactory, IRedisHashProvider, IRedisSetProvider]
 })
 export class RedisModule implements OnModuleInit {
 	constructor(private moduleRef: ModuleRef) {}

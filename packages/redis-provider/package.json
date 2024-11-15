@@ -6,12 +6,13 @@
 	"scripts": {
 		"build": "nest build",
 		"format": "prettier --write \"packages/**/*.ts\" \"tests/**/*.ts\"",
-		"lint": "eslint -c .eslintrc.json \"{src,apps,libs,tests,scripts}/**/*.ts\" --fix"
+		"lint": "eslint -c .eslintrc.json \"{src,apps,libs,tests,scripts}/**/*.ts\" --fix",
+		"bump": "lerna version patch --skip-git --yes"
 	},
 	"dependencies": {
-		"nconf": "^0.12.1"
+		"redis": "^4.7.0"
 	},
 	"devDependencies": {
-		"@types/nconf": "^0.10.6"
+		"@types/redis": "^4.0.11"
 	}
 }
