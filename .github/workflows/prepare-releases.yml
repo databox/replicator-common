@@ -60,8 +60,8 @@ jobs:
             # Get the previous version tag
             PREV_TAG=$(git describe --tags --abbrev=0 --match "${PACKAGE_NAME}@*" 2>/dev/null || echo "")
             
-            # Generate changes section with proper line breaks
-            CHANGES=$(git log --pretty=format:"- %s %ae (#%h)%n" ${PREV_TAG:+$PREV_TAG..HEAD} -- $LOCATION)
+            # Generate changes section
+            CHANGES=$(git log --pretty=format:"- %s %ae (#%h)" ${PREV_TAG:+$PREV_TAG..HEAD} -- $LOCATION | sed ':a;N;$!ba;s/\n/\\n/g')
             
             # Get unique contributors (using email handles)
             CONTRIBUTORS=$(git log --pretty=format:"%ae" ${PREV_TAG:+$PREV_TAG..HEAD} -- $LOCATION | 
@@ -71,22 +71,12 @@ jobs:
               tr '\n' ' '
             )
             
-            # Create formatted release notes with proper line breaks
-            RELEASE_NOTES=$(cat << EOF
-### Changes
-${CHANGES}
-
-### Contributors
-${CONTRIBUTORS}
-EOF
-            )
+            # Create formatted release notes
+            RELEASE_NOTES="### Changes\\n${CHANGES}\\n\\n### Contributors\\n${CONTRIBUTORS}"
             
             # Add full changelog if previous tag exists
             if [ ! -z "$PREV_TAG" ]; then
-              RELEASE_NOTES="${RELEASE_NOTES}
-
-### Full Changelog
-${PREV_TAG}...${TAG_NAME}"
+              RELEASE_NOTES="${RELEASE_NOTES}\\n\\n### Full Changelog\\n${PREV_TAG}...${TAG_NAME}"
             fi
             
             if gh release view $TAG_NAME &>/dev/null; then
