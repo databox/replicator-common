@@ -1,0 +1,44 @@
+{
+	"root": true,
+	"env": {
+		"node": true,
+		"es2022": true,
+		"jest": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended-type-checked",
+		"plugin:@typescript-eslint/stylistic-type-checked",
+		"plugin:prettier/recommended"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 2022,
+		"sourceType": "module",
+		"project": "./tsconfig.eslint.json"
+	},
+	"plugins": [
+		"@typescript-eslint",
+		"unused-imports"
+	],
+	"ignorePatterns": [],
+	"rules": {
+		"no-console": "error",
+		"@typescript-eslint/no-unsafe-member-access": "off",
+		"@typescript-eslint/no-unsafe-assignment": "off",
+		"@typescript-eslint/no-unsafe-call": "off",
+		"prettier/prettier": [
+			"warn",
+			{
+				"semi": true,
+				"quoteProps": "consistent",
+				"trailingComma": "none",
+				"bracketSpacing": true,
+				"arrowParens": "always",
+				"printWidth": 120,
+				"tabWidth": 4
+			}
+		],
+		"unused-imports/no-unused-imports": "warn"
+	}
+}
