@@ -10,6 +10,8 @@ on:
 jobs:
   prepare-releases:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
     
     steps:
       - name: Checkout repository
@@ -36,8 +38,6 @@ jobs:
 
       - name: Create or update releases
         if: steps.changed-packages.outputs.packages != '[]' && steps.changed-packages.outputs.packages != ''
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Parse the JSON output and create/update releases for each changed package
           echo '${{ steps.changed-packages.outputs.packages }}' | jq -r '.[] | @base64' | while read -r pkg_b64; do
