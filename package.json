@@ -30,6 +30,7 @@
     "bump:redis-provider": "lerna exec --scope @databox/redis-provider -- npm version patch --no-git-tag-version"
   },
   "dependencies": {
+    "@databox/config-provider": "1.0.19",
     "@nestjs/common": "^10.0.0"
   },
   "devDependencies": {
