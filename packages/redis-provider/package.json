@@ -1,5 +1,5 @@
 {
-	"name": "redis-provider",
+	"name": "@databox/redis-provider",
 	"version": "1.0.0",
 	"description": "The redis-provider package offers Redis-related functionalities for applications built with the NestJS framework. It includes various providers and interfaces to interact with Redis, such as IRedisProvider, IRedisHashProvider, IRedisSetProvider, and IRedisFactory. The package integrates with the config-provider to manage configuration settings and ensures type safety with TypeScript.",
 	"main": "RedisModule.js",
