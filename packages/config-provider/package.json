@@ -4,7 +4,7 @@
 	"description": "The config-provider package offers configuration management functionalities for applications built with the NestJS framework. It includes various providers and interfaces to manage configuration settings, such as IConfigProvider. The package ensures type safety with TypeScript.",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "nest build",
+		"build": "tsc",
 		"test": "jest"
 	},
 	"dependencies": {
