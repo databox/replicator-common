@@ -5,7 +5,7 @@ on:
     branches:
       - '**'
     paths:
-      - 'src/**'
+      - 'packages/**'
     
 jobs:
   prepare-releases:
@@ -34,12 +34,12 @@ jobs:
           PACKAGES=$(lerna ls --since origin/master --json)
           echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
 
-      - name: Create releases
+      - name: Create or update releases
         if: steps.changed-packages.outputs.packages != '[]' && steps.changed-packages.outputs.packages != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Parse the JSON output and create releases for each changed package
+          # Parse the JSON output and create/update releases for each changed package
           echo '${{ steps.changed-packages.outputs.packages }}' | jq -c '.[]' | while read -r package; do
             NAME=$(echo $package | jq -r '.name')
             VERSION=$(echo $package | jq -r '.version')
@@ -51,14 +51,33 @@ jobs:
             # Create tag name in the format package1@1.0.0
             TAG_NAME="${PACKAGE_NAME}@${VERSION}"
             
-            echo "Creating release for $TAG_NAME"
+            echo "Processing release for $TAG_NAME"
             
             # Create release notes by getting commits since last tag
             RELEASE_NOTES=$(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD -- $LOCATION)
             
-            # Create GitHub release
-            gh release create $TAG_NAME \
-              --title "$PACKAGE_NAME v$VERSION" \
-              --notes "$RELEASE_NOTES" \
-              --draft
-          done 
+            # Check if release already exists
+            if gh release view $TAG_NAME &>/dev/null; then
+              echo "Updating existing release $TAG_NAME"
+              
+              # Update existing release
+              gh release edit $TAG_NAME \
+                --title "$PACKAGE_NAME v$VERSION" \
+                --notes "$RELEASE_NOTES"
+              
+              # Update tag to point to current commit
+              git tag -f $TAG_NAME
+              git push --force origin $TAG_NAME
+            else
+              echo "Creating new release $TAG_NAME"
+              
+              # Create new GitHub release
+              gh release create $TAG_NAME \
+                --title "$PACKAGE_NAME v$VERSION" \
+                --notes "$RELEASE_NOTES" \
+                --draft
+            fi
+          done
+
+      - name: List created/updated releases
+        run: gh release list --limit 10
