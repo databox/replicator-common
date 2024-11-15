@@ -37,11 +37,11 @@ jobs:
       - name: Build package
         run: |
           # Use lerna to build specific package
-          lerna run build --scope ${{ steps.package-info.outputs.package_name }}
+          lerna run build --scope @databox/${{ steps.package-info.outputs.package_name }}
 
       - name: Publish package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Use lerna to publish specific package
-          npx lerna exec --scope ${{ steps.package-info.outputs.package_name }} -- npm publish --registry https://npm.pkg.github.com
+          # Use lerna to publish specific package with scope
+          npx lerna exec --scope @databox/${{ steps.package-info.outputs.package_name }} -- npm publish --registry https://npm.pkg.github.com
