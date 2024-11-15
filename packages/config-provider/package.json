@@ -12,5 +12,8 @@
 	},
 	"devDependencies": {
 		"@types/nconf": "^0.10.6"
+	},
+	"publishConfig": {
+		"@databox:registry": "https://npm.pkg.github.com"
 	}
 }

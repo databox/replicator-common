@@ -12,5 +12,8 @@
 	},
 	"devDependencies": {
 		"@types/redis": "^4.0.11"
+	},
+	"publishConfig": {
+		"@databox:registry": "https://npm.pkg.github.com"
 	}
 }
