@@ -1,6 +1,6 @@
 {
 	"name": "@databox/config-provider",
-	"version": "1.0.16",
+	"version": "1.0.17",
 	"description": "The config-provider package offers configuration management functionalities for applications built with the NestJS framework. It includes various providers and interfaces to manage configuration settings, such as IConfigProvider. The package ensures type safety with TypeScript.",
 	"main": "dist/index.js",
 	"scripts": {
